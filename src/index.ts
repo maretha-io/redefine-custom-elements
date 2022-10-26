@@ -247,6 +247,7 @@ function internalUpgrade(
     definitionForElement.set(instance, instancedDefinition);
     // attributes patches when needed
     if (instancedDefinition !== originalDefinition) {
+        console.warn("Redefining element", originalDefinition.LatestCtor.prototype.is);
         patchAttributes(instance, originalDefinition, instancedDefinition);
     }
     // Tricking the construction path to believe that a new instance is being created,
@@ -269,12 +270,6 @@ function internalUpgrade(
                 }
             });
         }
-    }
-
-    // connectedCallback retroactively invocation
-    // TODO: I'm not sure this is really needed...
-    if (ReflectApply(nativeNodeIsConnectedGetter, instance, [])) {
-        instancedDefinition.disconnectedCallback?.call(instance);
     }
 }
 
