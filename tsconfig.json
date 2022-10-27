@@ -8,7 +8,7 @@
         "declaration": false,
         // Enhance Strictness
         "strict": true,
-        "noUnusedLocals": true,
+        "noUnusedLocals": false,
         "suppressImplicitAnyIndexErrors": true,
         "noImplicitReturns": true,
         "strictBindCallApply": false,

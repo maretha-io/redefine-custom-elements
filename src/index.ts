@@ -12,6 +12,11 @@ interface Definition {
     observedAttributes: Set<string>;
 }
 
+export interface RedefinedCustomElementDetail {
+    tagName: string;
+    newConstructor: CustomElementConstructor;
+}
+
 const cer = customElements;
 const NativeHTMLElement = HTMLElement;
 
@@ -247,7 +252,6 @@ function internalUpgrade(
     definitionForElement.set(instance, instancedDefinition);
     // attributes patches when needed
     if (instancedDefinition !== originalDefinition) {
-        console.warn("Redefining element", originalDefinition.LatestCtor.prototype.is);
         patchAttributes(instance, originalDefinition, instancedDefinition);
     }
     // Tricking the construction path to believe that a new instance is being created,
@@ -376,6 +380,7 @@ Object.assign(CustomElementRegistry.prototype, {
         definitionsByTag.set(tagName, definition);
         definitionsByClass.set(constructor, definition);
         PivotCtor = pivotCtorByTag.get(tagName);
+        const wasRedefined = !!PivotCtor;
         if (!PivotCtor) {
             PivotCtor = createPivotingClass(
                 definition,
@@ -409,6 +414,20 @@ Object.assign(CustomElementRegistry.prototype, {
         const resolver = definedResolvers.get(tagName);
         if (resolver) {
             resolver(constructor);
+        }
+
+        if (wasRedefined) {
+            console.warn("Redefined element", tagName);
+            const definedEvent = new CustomEvent<RedefinedCustomElementDetail>(
+                'redefined-custom-element',
+                {
+                    detail: {
+                        tagName,
+                        newConstructor: constructor,
+                    },
+                }
+            );
+            document.dispatchEvent(definedEvent);
         }
     },
     whenDefined(
