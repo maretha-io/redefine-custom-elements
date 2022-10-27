@@ -42,7 +42,8 @@ function valueToString(value: any): string {
     try {
         return String(value);
         // eslint-disable-next-line no-empty
-    } catch {}
+    } catch {
+    }
     return '';
 }
 
@@ -168,6 +169,7 @@ function createPivotingClass(originalDefinition: Definition, tagName: string) {
                 ReflectSetPrototypeOf(this, patchedHTMLElement.prototype);
             }
         }
+
         connectedCallback() {
             const definition = definitionForElement.get(this);
             if (definition) {
@@ -182,6 +184,7 @@ function createPivotingClass(originalDefinition: Definition, tagName: string) {
                 awaiting.add(this);
             }
         }
+
         disconnectedCallback() {
             const definition = definitionForElement.get(this);
             if (definition) {
@@ -195,27 +198,33 @@ function createPivotingClass(originalDefinition: Definition, tagName: string) {
                 }
             }
         }
+
         adoptedCallback() {
             // TODO: this needs more work
             const definition = definitionForElement.get(this);
             definition?.adoptedCallback?.call(this);
         }
+
         formAssociatedCallback() {
             const definition = definitionForElement.get(this);
             definition?.formAssociatedCallback?.apply(this, arguments);
         }
+
         formDisabledCallback() {
             const definition = definitionForElement.get(this);
             definition?.formDisabledCallback?.apply(this, arguments);
         }
+
         formResetCallback() {
             const definition = definitionForElement.get(this);
             definition?.formResetCallback?.apply(this, arguments);
         }
+
         formStateRestoreCallback() {
             const definition = definitionForElement.get(this);
             definition?.formStateRestoreCallback?.apply(this, arguments);
         }
+
         attributeChangedCallback(...args: [name: string, oldValue: any, newValue: any]) {
             const definition = definitionForElement.get(this);
             // if both definitions are the same, then the observedAttributes is the same,
